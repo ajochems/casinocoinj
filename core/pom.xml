@@ -20,19 +20,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.google</groupId>
-        <artifactId>digitalcoinj-parent</artifactId>
-        <version>0.12-SNAPSHOT</version>
+        <groupId>com.jochems</groupId>
+        <artifactId>casinocoinj-parent</artifactId>
+        <version>0.12-BETA</version>
     </parent>
 
-    <artifactId>digitalcoinj</artifactId>
+    <artifactId>casinocoinj</artifactId>
 
-    <name>digitalcoinj</name>
-    <description>A Java digitalcoin library</description>
+    <name>casinocoinj</name>
+    <description>A Java Casinocoin library</description>
 
     <packaging>jar</packaging>
 
-    <url>https://code.google.com/p/bitcoinj</url>
+    <url>https://github.com/ajochems/casinocoinj</url>
 
     <licenses>
         <license>
@@ -45,8 +45,8 @@
     <!-- Dummy block to make Maven Central happy: authors list is in AUTHORS -->
     <developers>
         <developer>
-            <name>The bitcoinj team</name>
-            <email>bitcoinj@googlegroups.com</email>
+            <name>The casinocoinj team</name>
+            <email>andre@jochems.com</email>
         </developer>
     </developers>
 
@@ -61,33 +61,7 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>compile-protoc</id>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <tasks>
-                                        <path id="proto.path">
-                                            <fileset dir="src">
-                                                <include name="**/*.proto"/>
-                                            </fileset>
-                                        </path>
-                                        <pathconvert pathsep=" " property="proto.files" refid="proto.path"/>
-                                        <exec executable="protoc" failonerror="true">
-                                            <arg value="--java_out=${project.basedir}/src/main/java"/>
-                                            <arg value="-I${project.basedir}/src"/>
-                                            <arg line="${proto.files}"/>
-                                        </exec>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+
 
                 </plugins>
             </build>
@@ -226,7 +200,7 @@
             <version>3.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- digitalcoinj consumers are expected to provide their own SLF4J adapters
+        <!-- casinocoinj consumers are expected to provide their own SLF4J adapters
              such as logback, slf4j-log4j12, slf4j-jcl and so on
              see http://www.slf4j.org/faq.html -->
         <dependency>

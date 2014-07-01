@@ -2,7 +2,7 @@
 
 <?scenebuilder-classpath-element ../../../../target/classes?>
 
-<?scenebuilder-classpath-element ../../../../../core/target/digitalcoinj-0.12-SNAPSHOT.jar?>
+<?scenebuilder-classpath-element ../../../../../core/target/casinocoinj-0.12-BETA.jar?>
 
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -15,7 +15,6 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 <?import wallettemplate.controls.*?>
-<?import wallettemplate.controls.ClickableBitcoinAddress ?>
 
 <AnchorPane id="AnchorPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="300.0" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="wallettemplate.Controller">
   <children>

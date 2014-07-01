@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.google</groupId>
-  <artifactId>digitalcoinj-parent</artifactId>
-  <version>0.12-SNAPSHOT</version>
+  <groupId>com.jochems</groupId>
+  <artifactId>casinocoinj-parent</artifactId>
+  <version>0.12-BETA</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -21,14 +21,14 @@
     </parent>
 
     <scm>
-        <connection>scm:git:https://code.google.com/p/bitcoinj/</connection>
-        <developerConnection>scm:git:https://code.google.com/p/bitcoinj/</developerConnection>
-        <url>http://code.google.com/p/bitcoinj/source/browse</url>
+        <connection>scm:git:https://github.com/ajochems/casinocoinj/</connection>
+        <developerConnection>scm:git:https://github.com/ajochems/casinocoinj/</developerConnection>
+        <url>https://github.com/ajochems/casinocoinj</url>
     </scm>
 
-  <name>digitalcoinj Parent</name>
-  <description>Provides the common configuration for the digitalcoinJ modules</description>
-  <url>https://github.com/HashEngineering/digitalcoinj</url>
+  <name>casinocoinj</name>
+  <description>Provides the common configuration for the CasinocoinJ modules</description>
+  <url>https://github.com/ajochems/casinocoinj</url>
 
   <licenses>
     <license>
@@ -40,21 +40,21 @@
   </licenses>
 
   <issueManagement>
-    <system>Google Code</system>
-    <url>http://code.google.com/p/digitalcoinj/issues/list</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/ajochems/casinocoinj/issues</url>
   </issueManagement>
 
   <mailingLists>
     <mailingList>
-      <name>digitalcoinj Google Group</name>
-      <post>https://groups.google.com/forum/#!forum/digitalcoinj</post>
+      <name>casinocoinj Google Group</name>
+      <post>https://groups.google.com/forum/#!forum/casinocoinj</post>
     </mailingList>
   </mailingLists>
 
   <repositories>
     <repository>
-        <id>digitalcoinj-distribution</id>
-        <url>https://distribution.bitcoinj.googlecode.com/git/releases</url>
+        <id>casinocoinj-distribution</id>
+        <url>https://github.com/ajochems/casinocoinj/releases</url>
     </repository>
   </repositories>
 
@@ -83,7 +83,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>1.7.6</version>
       </dependency>
-      <!-- digitalcoinj consumers are expected to provide their own SLF4J adapters
+      <!-- casinocoinj consumers are expected to provide their own SLF4J adapters
     such as logback, slf4j-log4j12, slf4j-jcl and so on
     see http://www.slf4j.org/faq.html -->
       <dependency>
