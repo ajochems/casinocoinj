@@ -9,26 +9,19 @@
 
   <modules>
     <module>core</module>
-    <module>examples</module>
     <module>tools</module>
     <module>orchid</module>
   </modules>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+    <name>casinocoinj Parent</name>
+    <description>Provides the common configuration for the CasinocoinJ modules</description>
+    <url>https://github.com/ajochems/casinocoinj</url>
 
     <scm>
-        <connection>scm:git:https://github.com/ajochems/casinocoinj/</connection>
-        <developerConnection>scm:git:https://github.com/ajochems/casinocoinj/</developerConnection>
         <url>https://github.com/ajochems/casinocoinj</url>
+        <connection>scm:git:git://github.com/ajochems/casinocoinj.git</connection>
+        <developerConnection>scm:git:git@github.com:ajochems/casinocoinj.git</developerConnection>
     </scm>
-
-  <name>casinocoinj</name>
-  <description>Provides the common configuration for the CasinocoinJ modules</description>
-  <url>https://github.com/ajochems/casinocoinj</url>
 
   <licenses>
     <license>
@@ -51,13 +44,12 @@
     </mailingList>
   </mailingLists>
 
-  <repositories>
-    <repository>
-        <id>casinocoinj-distribution</id>
-        <url>https://github.com/ajochems/casinocoinj/releases</url>
-    </repository>
-  </repositories>
-
+    <repositories>
+        <repository>
+            <id>casinocoinj-distribution</id>
+            <url>https://github.com/ajochems/casinocoinj</url>
+        </repository>
+    </repositories>
 
   <!-- Common build plugin configuration -->
   <build>
