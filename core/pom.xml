@@ -50,24 +50,6 @@
         </developer>
     </developers>
 
-    <profiles>
-        <profile>
-            <id>update-protobuf</id>
-            <activation>
-                <property>
-                    <name>updateProtobuf</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-
-
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
         <plugins>
             <plugin>
