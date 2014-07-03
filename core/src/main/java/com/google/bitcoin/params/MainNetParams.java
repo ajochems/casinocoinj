@@ -50,11 +50,10 @@ public class MainNetParams extends NetworkParameters {
         System.out.println("#### Genesis hash: " + genesisHash);
         checkState(genesisHash.equals(CoinDefinition.genesisHash),
                 genesisHash);
-
         CoinDefinition.initCheckpoints(checkpoints);
-
+        System.out.println("#### Checkpoints: " + checkpoints);
         dnsSeeds = CoinDefinition.dnsSeeds;
-
+        System.out.println("#### DNS Seeds: " + dnsSeeds);
     }
 
     private static MainNetParams instance;

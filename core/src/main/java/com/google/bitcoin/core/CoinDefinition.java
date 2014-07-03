@@ -115,10 +115,8 @@ public class CoinDefinition {
 
     //net.cpp strDNSSeed
     static public String[] dnsSeeds = new String[] {
-            "204.11.237.246",
             "195.241.255.78",
             "162.242.217.120",
-            "188.226.155.141",
             "216.177.81.87",
             "68.110.80.22",
             "84.127.38.52",
@@ -127,7 +125,6 @@ public class CoinDefinition {
             "182.173.123.181",
             "74.208.97.13",
             "63.170.87.173",
-            "195.241.255.78",
             "162.242.227.236"
     };
 
@@ -218,8 +215,7 @@ public class CoinDefinition {
     public static final String ID_UNITTESTNET = "com.jochems.casinocoin.unittest";
 
     //checkpoints.cpp Checkpoints::mapCheckpoints
-    public static void initCheckpoints(Map<Integer, Sha256Hash> checkpoints)
-    {
+    public static void initCheckpoints(Map<Integer, Sha256Hash> checkpoints) {
         checkpoints.put( 0, new Sha256Hash("4f46c9af6d88a14114b7dc53a37d81ba4064cda5ae2ede1213ca28fea9b86e9c"));
         checkpoints.put( 1, new Sha256Hash("d6eea1064e9292f2a38e138bec64797914cff3189fbc6eaa2cc646c1514ccdfe"));
         checkpoints.put( 777, new Sha256Hash("838c9d331811479957009c39d2e1e723d47ebd21453b3ad92bcabd6cb5dd6ab1"));
