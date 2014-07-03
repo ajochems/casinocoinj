@@ -74,9 +74,9 @@ public class VersionMessage extends Message {
     public boolean relayTxesBeforeFilter;
 
     /** The version of this library release, as a string. */
-    public static final String BITCOINJ_VERSION = "0.12-SNAPSHOT";
+    public static final String BITCOINJ_VERSION = "0.12-BETA";
     /** The value that is prepended to the subVer field of this application. */
-    public static final String LIBRARY_SUBVER = "/"+CoinDefinition.coinName+"J:" + BITCOINJ_VERSION + "/";
+    public static final String LIBRARY_SUBVER = "/digishield:1.2.0" + "/" + CoinDefinition.coinName+"J:" + BITCOINJ_VERSION + "/";
 
     public VersionMessage(NetworkParameters params, byte[] msg) throws ProtocolException {
         super(params, msg, 0);

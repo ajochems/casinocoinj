@@ -27,7 +27,7 @@
 
     <artifactId>casinocoinj</artifactId>
 
-    <name>casinocoinj</name>
+    <name>casinocoinj Core</name>
     <description>A Java Casinocoin library</description>
 
     <packaging>jar</packaging>

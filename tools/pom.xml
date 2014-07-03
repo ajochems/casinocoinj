@@ -22,7 +22,6 @@
     <groupId>com.jochems</groupId>
     <artifactId>casinocoinj-parent</artifactId>
     <version>0.12-BETA</version>
-
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

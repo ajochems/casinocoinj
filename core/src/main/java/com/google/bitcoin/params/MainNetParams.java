@@ -42,10 +42,12 @@ public class MainNetParams extends NetworkParameters {
         genesisBlock.setDifficultyTarget(CoinDefinition.genesisBlockDifficultyTarget);
         genesisBlock.setTime(CoinDefinition.genesisBlockTime);
         genesisBlock.setNonce(CoinDefinition.genesisBlockNonce);
+        genesisBlock.setMerkleRoot(new Sha256Hash(CoinDefinition.genesisMerkleRoot));
         id = ID_MAINNET;
         subsidyDecreaseBlockCount = CoinDefinition.subsidyDecreaseBlockCount;
         spendableCoinbaseDepth = CoinDefinition.spendableCoinbaseDepth;
         String genesisHash = genesisBlock.getHashAsString();
+        System.out.println("#### Genesis hash: " + genesisHash);
         checkState(genesisHash.equals(CoinDefinition.genesisHash),
                 genesisHash);
 

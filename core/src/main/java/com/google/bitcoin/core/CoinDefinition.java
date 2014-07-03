@@ -107,16 +107,28 @@ public class CoinDefinition {
     static public long genesisBlockTime = 1372838150L;                       //main.cpp: LoadBlockIndex
     static public long genesisBlockNonce = (16762L);                         //main.cpp: LoadBlockIndex
     static public String genesisHash = "4f46c9af6d88a14114b7dc53a37d81ba4064cda5ae2ede1213ca28fea9b86e9c"; //main.cpp: hashGenesisBlock
-    static public int genesisBlockValue = 50;                                                              //main.cpp: LoadBlockIndex
-    //taken from the raw data of the block explorer
+    static public int genesisBlockValue = 0;                                                              //main.cpp: LoadBlockIndex
+    //taken from the raw data of the block explorer with height 0
+    static public String genesisMerkleRoot = "73d304deca65f150913c0f87305dec7aa3913919889e483aa04bda87133023e6";
     static public String genesisTxInBytes = "04ffff001d0104344e592054696d657320322f4a756c792f32303133205768617420746865204e2e532e412e204b6e6f77732041626f757420596f75";   //"NY Times 2/July/2013 What the N.S.A. Knows About You"
-    static public String genesisTxOutBytes = "0000";
+    static public String genesisTxOutBytes = "00ac";
 
     //net.cpp strDNSSeed
     static public String[] dnsSeeds = new String[] {
-            "seed1.casinocoin.org",
-            "seed2.casinocoin.org",
-            "seed3.casinocoin.org"
+            "204.11.237.246",
+            "195.241.255.78",
+            "162.242.217.120",
+            "188.226.155.141",
+            "216.177.81.87",
+            "68.110.80.22",
+            "84.127.38.52",
+            "220.189.247.202",
+            "222.94.107.90",
+            "182.173.123.181",
+            "74.208.97.13",
+            "63.170.87.173",
+            "195.241.255.78",
+            "162.242.227.236"
     };
 
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.

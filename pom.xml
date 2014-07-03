@@ -44,13 +44,6 @@
     </mailingList>
   </mailingLists>
 
-    <repositories>
-        <repository>
-            <id>casinocoinj-distribution</id>
-            <url>https://github.com/ajochems/casinocoinj</url>
-        </repository>
-    </repositories>
-
   <!-- Common build plugin configuration -->
   <build>
     <plugins>

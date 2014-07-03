@@ -48,7 +48,7 @@ public class ForwardingService {
             System.err.println("Usage: address-to-send-back-to [regtest|testnet]");
             return;
         }
-
+        System.out.println("##### Running ForwardingService with address: " + args[0]);
         // Figure out which network we should connect to. Each one gets its own set of files.
         NetworkParameters params;
         String filePrefix;
@@ -59,9 +59,11 @@ public class ForwardingService {
             params = RegTestParams.get();
             filePrefix = "forwarding-service-regtest";
         } else {
+            System.out.println("##### Call : MainNetParams.get()");
             params = MainNetParams.get();
             filePrefix = "forwarding-service";
         }
+        System.out.println("##### filePrefix: " + filePrefix);
         // Parse the address given as the first parameter.
         forwardingAddress = new Address(params, args[0]);
 
