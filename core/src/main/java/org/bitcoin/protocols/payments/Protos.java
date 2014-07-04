@@ -51,7 +51,7 @@ public final class Protos {
    * Protobuf type {@code payments.Output}
    *
    * <pre>
-   * Generalized form of "send payment to this/these bitcoin addresses"
+   * Generalized form of "send payment to this/these casinocoin addresses"
    * </pre>
    */
   public static final class Output extends
@@ -325,7 +325,7 @@ public final class Protos {
      * Protobuf type {@code payments.Output}
      *
      * <pre>
-     * Generalized form of "send payment to this/these bitcoin addresses"
+     * Generalized form of "send payment to this/these casinocoin addresses"
      * </pre>
      */
     public static final class Builder extends
@@ -343,7 +343,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.Output.class, org.bitcoin.protocols.payments.Protos.Output.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.Output.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.Output.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1361,7 +1361,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.PaymentDetails.class, org.bitcoin.protocols.payments.Protos.PaymentDetails.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.PaymentDetails.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.PaymentDetails.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2847,7 +2847,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.PaymentRequest.class, org.bitcoin.protocols.payments.Protos.PaymentRequest.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.PaymentRequest.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.PaymentRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3584,7 +3584,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.X509Certificates.class, org.bitcoin.protocols.payments.Protos.X509Certificates.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.X509Certificates.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.X509Certificates.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -4375,7 +4375,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.Payment.class, org.bitcoin.protocols.payments.Protos.Payment.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.Payment.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.Payment.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -5521,7 +5521,7 @@ public final class Protos {
                 org.bitcoin.protocols.payments.Protos.PaymentACK.class, org.bitcoin.protocols.payments.Protos.PaymentACK.Builder.class);
       }
 
-      // Construct using org.bitcoin.protocols.payments.Protos.PaymentACK.newBuilder()
+      // Construct using org.casinocoin.protocols.payments.Protos.PaymentACK.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -5965,7 +5965,7 @@ public final class Protos {
       "ctions\030\002 \003(\014\022#\n\trefund_to\030\003 \003(\0132\020.paymen" +
       "ts.Output\022\014\n\004memo\030\004 \001(\t\">\n\nPaymentACK\022\"\n" +
       "\007payment\030\001 \002(\0132\021.payments.Payment\022\014\n\004mem" +
-      "o\030\002 \001(\tB(\n\036org.bitcoin.protocols.payment" +
+      "o\030\002 \001(\tB(\n\036org.casinocoin.protocols.payment" +
       "sB\006Protos"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
