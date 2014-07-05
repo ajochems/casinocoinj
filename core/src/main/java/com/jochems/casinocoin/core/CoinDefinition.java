@@ -54,8 +54,32 @@ public class CoinDefinition {
     public static final int TARGET_SPACING = (int)(1 * 30);  // 30 seconds per block.
     public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;
 
+    public static final int TARGET_TIMESPAN_1 = (int)(6 * 60 * 3 * 20);  // 3.5 days per difficulty cycle, on average.
+    public static final int TARGET_SPACING_1 = (int)(1 * 20);  // 20 seconds per block.
+    public static final int INTERVAL_1 = TARGET_TIMESPAN_1 / TARGET_SPACING_1;  //1080 blocks
+
+    public static final int TARGET_TIMESPAN_2 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
+    public static final int TARGET_SPACING_2 = (int)(1 * 20);  // 20 seconds per block.
+    public static final int INTERVAL_2 = TARGET_TIMESPAN_2 / TARGET_SPACING_2;  //108 blocks
+
+    public static final int TARGET_TIMESPAN_3 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
+    public static final int TARGET_SPACING_3 = (int)(1 * 20);  // 20 seconds per block.
+    public static final int INTERVAL_3 = TARGET_TIMESPAN_3 / TARGET_SPACING_3;  //108 blocks
+
+    private static int nKgwImplementation_v1100 = 227000;    // Change at block height 227000 - Kimoto Gravity Wall implementation - DiffMode2 in main.cpp
+    private static int nKgwExploit_v1200 = 445000;           // Change at block height 445000 - KGW Exploit fix - DiffMode3 in main.cpp
+    private static int nRewardChange_v1300 = 600000;      // Change at block height 600000 - Reward change from 50 to 25 - DiffMode4 in main.cpp
+
     public static final int getInterval(int height, boolean testNet) {
-        return INTERVAL;
+        if(height < nKgwImplementation_v1100) {
+            return INTERVAL;
+        } else if(height < nKgwExploit_v1200) {
+            return INTERVAL_1;
+        } else if(height < nRewardChange_v1300) {
+            return INTERVAL_2;
+        } else {
+            return INTERVAL_3;
+        }
     }
 
     public static final int getIntervalCheckpoints() {
@@ -63,15 +87,39 @@ public class CoinDefinition {
     }
 
     public static final int getTargetTimespan(int height, boolean testNet) {
-        return TARGET_TIMESPAN;
+        if(height < nKgwImplementation_v1100) {
+            return TARGET_TIMESPAN;
+        } else if(height < nKgwExploit_v1200) {
+            return TARGET_TIMESPAN_1;
+        } else if(height < nRewardChange_v1300) {
+            return TARGET_TIMESPAN_2;
+        } else {
+            return TARGET_TIMESPAN_3;
+        }
     }
 
     public static int getMaxTimeSpan(int value, int height, boolean testNet) {
-        return value * 75 / 60;
+        if(height < nKgwImplementation_v1100) {
+            return value * 4;
+        } else if(height < nKgwExploit_v1200) {
+            return value * 2;
+        }  else if(height < nRewardChange_v1300) {
+            return value * 2;
+        } else {
+            return value * 75 / 60;
+        }
     }
 
     public static int getMinTimeSpan(int value, int height, boolean testNet) {
-        return value * 55 / 73;
+        if(height < nKgwImplementation_v1100) {
+            return value / 4;
+        } else if(height < nKgwExploit_v1200) {
+            return value / 2;
+        }  else if(height < nRewardChange_v1300) {
+            return value / 2;
+        } else {
+            return value * 55 / 73;
+        }
     }
 
     public static int spendableCoinbaseDepth = 8; //main.h: static const int COINBASE_MATURITY

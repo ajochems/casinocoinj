@@ -46,13 +46,9 @@ public class MainNetParams extends NetworkParameters {
         subsidyDecreaseBlockCount = CoinDefinition.subsidyDecreaseBlockCount;
         spendableCoinbaseDepth = CoinDefinition.spendableCoinbaseDepth;
         String genesisHash = genesisBlock.getHashAsString();
-        System.out.println("#### Genesis hash: " + genesisHash);
-        checkState(genesisHash.equals(CoinDefinition.genesisHash),
-                genesisHash);
+        checkState(genesisHash.equals(CoinDefinition.genesisHash), genesisHash);
         CoinDefinition.initCheckpoints(checkpoints);
-        System.out.println("#### Checkpoints: " + checkpoints);
         dnsSeeds = CoinDefinition.dnsSeeds;
-        System.out.println("#### DNS Seeds: " + dnsSeeds);
     }
 
     private static MainNetParams instance;
