@@ -16,8 +16,8 @@
 
 package org.litecoin;
 
-import com.jochems.casinocoin.core.*;
-import com.jochems.casinocoin.net.discovery.PeerDBDiscovery;
+import org.casinocoin.core.*;
+import org.casinocoin.net.discovery.PeerDBDiscovery;
 
 import java.io.File;
 import java.math.BigInteger;
