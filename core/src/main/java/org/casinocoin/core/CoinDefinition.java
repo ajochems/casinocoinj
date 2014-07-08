@@ -1,5 +1,8 @@
 package org.casinocoin.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.util.Map;
 
@@ -14,7 +17,7 @@ import java.util.Map;
  * Changed the coin definition settings to the appropriate CasinoCoin settings
  */
 public class CoinDefinition {
-
+    private static final Logger log = LoggerFactory.getLogger(CoinDefinition.class);
 
     public static final String coinName = "CasinoCoin";
     public static final String coinTicker = "CSC";
@@ -47,39 +50,37 @@ public class CoinDefinition {
 
     public static final CoinHash coinPOWHash = CoinHash.scrypt;
 
-    public static boolean checkpointFileSupport = true;
+    public static boolean checkpointFileSupport = false;
     public static int checkpointDaysBack = 21;
 
     public static final int TARGET_TIMESPAN = (int)(6 * 60 * 60);  // 6 hours / 0.25 days per difficulty cycle, on average.
     public static final int TARGET_SPACING = (int)(1 * 30);  // 30 seconds per block.
     public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;
 
-    public static final int TARGET_TIMESPAN_1 = (int)(6 * 60 * 3 * 20);  // 3.5 days per difficulty cycle, on average.
-    public static final int TARGET_SPACING_1 = (int)(1 * 20);  // 20 seconds per block.
-    public static final int INTERVAL_1 = TARGET_TIMESPAN_1 / TARGET_SPACING_1;  //1080 blocks
+    public static final int TARGET_TIMESPAN_1 = (int)(1 * 30);  // every block the difficulty will change.
+    public static final int TARGET_SPACING_1 = (int)(1 * 30);  // 30 seconds per block.
+    public static final int INTERVAL_1 = TARGET_TIMESPAN_1 / TARGET_SPACING_1;  // 1 block
 
     public static final int TARGET_TIMESPAN_2 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
-    public static final int TARGET_SPACING_2 = (int)(1 * 20);  // 20 seconds per block.
+    public static final int TARGET_SPACING_2 = (int)(1 * 30);  // 20 seconds per block.
     public static final int INTERVAL_2 = TARGET_TIMESPAN_2 / TARGET_SPACING_2;  //108 blocks
-
-    public static final int TARGET_TIMESPAN_3 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
-    public static final int TARGET_SPACING_3 = (int)(1 * 20);  // 20 seconds per block.
-    public static final int INTERVAL_3 = TARGET_TIMESPAN_3 / TARGET_SPACING_3;  //108 blocks
 
     public static int nKgwImplementation_v1100 = 227000;    // Change at block height 227000 - Kimoto Gravity Wall implementation - DiffMode2 in main.cpp
     public static int nKgwExploit_v1200 = 445000;           // Change at block height 445000 - KGW Exploit fix - DiffMode3 in main.cpp
     public static int nRewardChange_v1300 = 600000;      // Change at block height 600000 - Reward change from 50 to 25 - DiffMode4 in main.cpp
 
     public static final int getInterval(int height, boolean testNet) {
+        int retInterval;
         if(height < nKgwImplementation_v1100) {
-            return INTERVAL;
+            retInterval = INTERVAL;
         } else if(height < nKgwExploit_v1200) {
-            return INTERVAL_1;
+            retInterval = INTERVAL_1;
         } else if(height < nRewardChange_v1300) {
-            return INTERVAL_2;
+            retInterval = INTERVAL_1;
         } else {
-            return INTERVAL_3;
+            retInterval = INTERVAL_2;
         }
+        return retInterval;
     }
 
     public static final int getIntervalCheckpoints() {
@@ -92,9 +93,9 @@ public class CoinDefinition {
         } else if(height < nKgwExploit_v1200) {
             return TARGET_TIMESPAN_1;
         } else if(height < nRewardChange_v1300) {
-            return TARGET_TIMESPAN_2;
+            return TARGET_TIMESPAN_1;
         } else {
-            return TARGET_TIMESPAN_3;
+            return TARGET_TIMESPAN_2;
         }
     }
 
@@ -136,6 +137,9 @@ public class CoinDefinition {
 
 
     public static final boolean supportsBloomFiltering = false;
+    public static boolean supportsIrcDiscovery() {
+        return false;
+    }
 
     public static final int Port    = 47950;       //protocol.h GetDefaultPort(testnet=false)
     public static final int TestPort = 17950;     //protocol.h GetDefaultPort(testnet=true)
@@ -161,17 +165,10 @@ public class CoinDefinition {
 
     //net.cpp strDNSSeed
     static public String[] dnsSeeds = new String[] {
-            "195.241.255.78",
-            "162.242.217.120",
-            "216.177.81.87",
-            "68.110.80.22",
-            "84.127.38.52",
-            "220.189.247.202",
-            "222.94.107.90",
-            "182.173.123.181",
-            "74.208.97.13",
-            "63.170.87.173",
-            "162.242.227.236"
+            "seed.casinocoin.org",
+            "seed1.casinocoin.org",
+            "seed2.casinocoin.org",
+            "seed3.casinocoin.org",
     };
 
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.
