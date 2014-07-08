@@ -50,7 +50,7 @@ public class CoinDefinition {
 
     public static final CoinHash coinPOWHash = CoinHash.scrypt;
 
-    public static boolean checkpointFileSupport = false;
+    public static boolean checkpointFileSupport = true;
     public static int checkpointDaysBack = 21;
 
     public static final int TARGET_TIMESPAN = (int)(6 * 60 * 60);  // 6 hours / 0.25 days per difficulty cycle, on average.
@@ -271,6 +271,12 @@ public class CoinDefinition {
         checkpoints.put( 347777, new Sha256Hash("9ba10b9cd9b94e903e67da6a1033841a3e66b6a33f09cbaec2146d4f72dbea2d"));
         checkpoints.put( 377777, new Sha256Hash("6eecff79e07910c69ac5340ad34c74cd95ecdfb0282ac62b30e7ba443114a628"));
         checkpoints.put( 444429, new Sha256Hash("01f8b85612927fd3660e7e036f559770ebb09d896f54abf70d99be2fe1793155"));
+        checkpoints.put( 445000, new Sha256Hash("0d685430f32525f826be629e0770f4a69f5dad0005cd114bcea089b1cf8ca0a0"));
+        checkpoints.put( 460000, new Sha256Hash("3f3b20b161407d2c0ccc889e0dc382cd207791a9e6dc02efad01f5842597a6a8"));
+        checkpoints.put( 475000, new Sha256Hash("3709a7181f1da79f210324f15f10a706025d6a552420aac764d381cce5b25863"));
+        checkpoints.put( 490000, new Sha256Hash("498047a9d90cfb56279a3bbaab5301e030d0b5501d51dd69a8beb09161e3e703"));
+        checkpoints.put( 505000, new Sha256Hash("8a0bac4c072cec6f64906d976f2c32edb665c7551756c1fe522d78f89a6b9b93"));
+        checkpoints.put( 520000, new Sha256Hash("da63ce02001376f8f602db0308f66532697f66d4840b2d12d274370efbe16d4b"));
     }
 
     //Unit Test Information
