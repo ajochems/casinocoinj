@@ -62,9 +62,11 @@ public abstract class NetworkParameters implements Serializable {
 
     // Kimoto Gravity Wall parameters
     public class KGWParams {
+
         public final int blocksTargetSpacing;
         public final long pastBlocksMin;
         public final long pastBlocksMax;
+
         public KGWParams(final int blocksTargetSpacing, final long pastBlocksMin, final long pastBlocksMax) {
             this.blocksTargetSpacing = blocksTargetSpacing;
             this.pastBlocksMin = pastBlocksMin;
@@ -72,8 +74,10 @@ public abstract class NetworkParameters implements Serializable {
         }
     }
 
+    private KGWParams kgwParams= new KGWParams(CoinDefinition.targetKGWTimespan, CoinDefinition.PastBlocksMin, CoinDefinition.PastBlocksMax);
+
     public KGWParams getKgwParams() {
-        return null;
+        return kgwParams;
     }
 
     protected Block genesisBlock;
@@ -339,11 +343,11 @@ public abstract class NetworkParameters implements Serializable {
     }
 
     public int getRetargetBlockCount() {
-        return getInterval() - 1;
+        return getInterval();
     }
 
     public int getRetargetBlockCount(StoredBlock cursor) {
-        return getInterval() - 1;
+        return getInterval();
     }
 
     /**

@@ -22,12 +22,12 @@
     <parent>
         <groupId>org.casinocoin</groupId>
         <artifactId>casinocoinj-parent</artifactId>
-        <version>0.12-BETA</version>
+        <version>0.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>casinocoinj</artifactId>
 
-    <name>casinocoinj Core</name>
+    <name>Casinocoinj Core</name>
     <description>A Java Casinocoin library</description>
 
     <packaging>jar</packaging>
@@ -45,8 +45,8 @@
     <!-- Dummy block to make Maven Central happy: authors list is in AUTHORS -->
     <developers>
         <developer>
-            <name>The casinocoinj team</name>
-            <email>andre@jochems.com</email>
+            <name>The Casinocoinj team</name>
+            <email>andre.jochems@gmail.com</email>
         </developer>
     </developers>
 

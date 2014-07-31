@@ -51,23 +51,28 @@ public class CoinDefinition {
     public static final CoinHash coinPOWHash = CoinHash.scrypt;
 
     public static boolean checkpointFileSupport = true;
-    public static int checkpointDaysBack = 21;
+    public static int checkpointDaysBack = 14;
 
-    public static final int TARGET_TIMESPAN = (int)(6 * 60 * 60);  // 6 hours / 0.25 days per difficulty cycle, on average.
+    public static final int TARGET_TIMESPAN = (int)(0.25 * 24 * 60 * 60);  // 6 hours / 0.25 days per difficulty cycle, on average.
     public static final int TARGET_SPACING = (int)(1 * 30);  // 30 seconds per block.
-    public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING;
+    public static final int INTERVAL = TARGET_TIMESPAN / TARGET_SPACING; // 720 blocks
 
     public static final int TARGET_TIMESPAN_1 = (int)(1 * 30);  // every block the difficulty will change.
     public static final int TARGET_SPACING_1 = (int)(1 * 30);  // 30 seconds per block.
     public static final int INTERVAL_1 = TARGET_TIMESPAN_1 / TARGET_SPACING_1;  // 1 block
 
-    public static final int TARGET_TIMESPAN_2 = (int)(108 * 20);  // 36 minutes per difficulty cycle, on average.
-    public static final int TARGET_SPACING_2 = (int)(1 * 30);  // 20 seconds per block.
-    public static final int INTERVAL_2 = TARGET_TIMESPAN_2 / TARGET_SPACING_2;  //108 blocks
-
+    // block heights for coin forks
     public static int nKgwImplementation_v1100 = 227000;    // Change at block height 227000 - Kimoto Gravity Wall implementation - DiffMode2 in main.cpp
     public static int nKgwExploit_v1200 = 445000;           // Change at block height 445000 - KGW Exploit fix - DiffMode3 in main.cpp
-    public static int nRewardChange_v1300 = 600000;      // Change at block height 600000 - Reward change from 50 to 25 - DiffMode4 in main.cpp
+    public static int nRewardChange_v1300 = 575000;      // Change at block height 600000 - Reward change from 50 to 25 - DiffMode4 in main.cpp
+
+    // KGW settings - GetNextWorkRequired_V2 in main.cpp
+    public static final int targetKGWTimespan = (int)(1 * 30);
+    public static final int	timeDaySeconds = 60 * 60 * 24;
+    public static final long PastSecondsMin	= timeDaySeconds / 100; // * 0.01;
+    public static final long PastSecondsMax	= timeDaySeconds * 14 / 100; // * 0.14
+    public static final long PastBlocksMin	= PastSecondsMin / targetKGWTimespan;
+    public static final long PastBlocksMax	= PastSecondsMax / targetKGWTimespan;
 
     public static final int getInterval(int height, boolean testNet) {
         int retInterval;
@@ -78,7 +83,7 @@ public class CoinDefinition {
         } else if(height < nRewardChange_v1300) {
             retInterval = INTERVAL_1;
         } else {
-            retInterval = INTERVAL_2;
+            retInterval = INTERVAL_1;
         }
         return retInterval;
     }
@@ -95,7 +100,7 @@ public class CoinDefinition {
         } else if(height < nRewardChange_v1300) {
             return TARGET_TIMESPAN_1;
         } else {
-            return TARGET_TIMESPAN_2;
+            return TARGET_TIMESPAN_1;
         }
     }
 
@@ -103,11 +108,11 @@ public class CoinDefinition {
         if(height < nKgwImplementation_v1100) {
             return value * 4;
         } else if(height < nKgwExploit_v1200) {
-            return value * 2;
+            return value * 4;
         }  else if(height < nRewardChange_v1300) {
-            return value * 2;
+            return value * 4;
         } else {
-            return value * 75 / 60;
+            return value * 4;
         }
     }
 
@@ -115,22 +120,22 @@ public class CoinDefinition {
         if(height < nKgwImplementation_v1100) {
             return value / 4;
         } else if(height < nKgwExploit_v1200) {
-            return value / 2;
+            return value / 4;
         }  else if(height < nRewardChange_v1300) {
-            return value / 2;
+            return value / 4;
         } else {
-            return value * 55 / 73;
+            return value / 4;
         }
     }
 
     public static int spendableCoinbaseDepth = 8; //main.h: static const int COINBASE_MATURITY
-    public static final BigInteger MAX_MONEY = BigInteger.valueOf(336000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
+    public static final BigInteger MAX_MONEY = BigInteger.valueOf(63000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
 
     public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(10000000);   // MIN_TX_FEE
     public static final BigInteger DUST_LIMIT = Utils.CENT; //main.h CTransaction::GetMinFee        0.01 coins
 
-    public static final int PROTOCOL_VERSION = 70003;          //version.h PROTOCOL_VERSION
-    public static final int MIN_PROTOCOL_VERSION = 70003;        //version.h MIN_PROTO_VERSION - eliminate 60001 which are on the wrong fork
+    public static final int PROTOCOL_VERSION = 70004;          //version.h PROTOCOL_VERSION
+    public static final int MIN_PROTOCOL_VERSION = 70004;        //version.h MIN_PROTO_VERSION - eliminate 60001 which are on the wrong fork
 
     public static final int BLOCK_CURRENTVERSION = 1;   //CBlock::CURRENT_VERSION
     public static final int MAX_BLOCK_SIZE = 1000000;
@@ -141,7 +146,7 @@ public class CoinDefinition {
         return false;
     }
 
-    public static final int Port    = 47950;       //protocol.h GetDefaultPort(testnet=false)
+    public static final int Port = 47950;       //protocol.h GetDefaultPort(testnet=false)
     public static final int TestPort = 17950;     //protocol.h GetDefaultPort(testnet=true)
 
     //
@@ -168,7 +173,7 @@ public class CoinDefinition {
             "seed.casinocoin.org",
             "seed1.casinocoin.org",
             "seed2.casinocoin.org",
-            "seed3.casinocoin.org",
+            "162.242.217.120"
     };
 
     public static int minBroadcastConnections = 1;   //0 for default; we need more peers.
@@ -187,9 +192,9 @@ public class CoinDefinition {
 
     //main.cpp GetBlockValue(height, fee)
     public static final BigInteger GetBlockReward(int height){
-        // set default to 50 CSC coins
+        // set default to 10 CSC coins
         int COIN = 1;
-        BigInteger nSubsidy = Utils.toNanoCoins(50, 0);
+        BigInteger nSubsidy = Utils.toNanoCoins(10, 0);
 
         if(height < 720){
             nSubsidy = Utils.toNanoCoins(35, 0); //35
@@ -211,8 +216,10 @@ public class CoinDefinition {
             nSubsidy = Utils.toNanoCoins(40, 0); //40
         } else if(height < 7200){
             nSubsidy = Utils.toNanoCoins(45, 0); //45
+        } else if(height <= 575000){
+            nSubsidy = Utils.toNanoCoins(50, 0); //45
         } else {
-            return nSubsidy.shiftRight(height / subsidyDecreaseBlockCount);
+            return nSubsidy;
         }
         System.out.println("##### GetBlockReward for height " + height + ": " + nSubsidy);
         return nSubsidy;
@@ -263,6 +270,7 @@ public class CoinDefinition {
         checkpoints.put( 197777, new Sha256Hash("2f9203c38cede6e1c61a69eb43c4f62d8e04ba62a57a7d866f4d715eec033cd4"));
         checkpoints.put( 207777, new Sha256Hash("3631874522954f18e6834ad68918dcc060b2712fea7a381e11e10193c6ab2f24"));
         checkpoints.put( 217777, new Sha256Hash("c86150e3408be1ca10eb1b94f374ae331c07dec6e2162bf06f5c31d83faa9715"));
+        checkpoints.put( 227000, new Sha256Hash("586d07a1f2deae92f916952daa1d2d05582fbe989077a16756c607b3b1112607"));
         checkpoints.put( 237777, new Sha256Hash("6f9d56c970ec057c9d6b20e930e50811d8b5d0215046c80bb681d914e2cca4ea"));
         checkpoints.put( 257777, new Sha256Hash("53e08f4dfe94f5c489aeb564ba84b5e131d026827533f7b446e956541c94eab2"));
         checkpoints.put( 277777, new Sha256Hash("69f7a0b78bf4609971af3702ffd8d2dec7df07d784240aaa28a67d0c78365668"));
@@ -276,8 +284,11 @@ public class CoinDefinition {
         checkpoints.put( 475000, new Sha256Hash("3709a7181f1da79f210324f15f10a706025d6a552420aac764d381cce5b25863"));
         checkpoints.put( 490000, new Sha256Hash("498047a9d90cfb56279a3bbaab5301e030d0b5501d51dd69a8beb09161e3e703"));
         checkpoints.put( 505000, new Sha256Hash("8a0bac4c072cec6f64906d976f2c32edb665c7551756c1fe522d78f89a6b9b93"));
+        checkpoints.put( 506880, new Sha256Hash("4f17e9bfd4fd91fba9fd109767818098f9d84415afc5a7d2bf429ed3a5765f49"));
         checkpoints.put( 520000, new Sha256Hash("da63ce02001376f8f602db0308f66532697f66d4840b2d12d274370efbe16d4b"));
+        checkpoints.put( 534960, new Sha256Hash("9acd623b92b4b76a7248f99a09f94f4485520d70597fe8c3c3eca8d285e15dd1"));
         checkpoints.put( 535000, new Sha256Hash("c0697b721370fff3f04389f56ad1ab94d7cb517fc692711f1469e0c8320f521c"));
+        checkpoints.put( 550000, new Sha256Hash("b3c679d696942640b3332920f44e5740949c76f93ad932845ad672145bc48c35"));
     }
 
     //Unit Test Information

@@ -48,32 +48,24 @@ public class BuildCheckpoints {
 
     public static void main(String[] args) throws Exception {
         BriefLogFormatter.init();
-
         // Sorted map of UNIX time of block to StoredBlock object.
         final TreeMap<Integer, StoredBlock> checkpoints = new TreeMap<Integer, StoredBlock>();
-
-        // Configure bitcoinj to fetch only headers, not save them to disk, connect to a local fully synced/validated
-        // node and to save block headers that are on interval boundaries, as long as they are <1 month old.
+        // Configure casinocoinj to fetch only headers, not save them to disk, connect to a local fully synced/validated
+        // node and to save block headers that are on interval boundaries, as long as they are < checkpointDaysBack.
         final BlockStore store = new MemoryBlockStore(PARAMS);
         final BlockChain chain = new BlockChain(PARAMS, store);
         final PeerGroup peerGroup = new PeerGroup(PARAMS, chain);
         peerGroup.addAddress(InetAddress.getLocalHost());
         long now = new Date().getTime() / 1000;
         peerGroup.setFastCatchupTimeSecs(now);
-
-        final long oneMonthAgo = now - (86400 * CoinDefinition.checkpointDaysBack);
-
+        // Go and download checkpoints upto the defined days back parameter
+        final long daysBack = now - (86400 * CoinDefinition.checkpointDaysBack);
         chain.addListener(new AbstractBlockChainListener() {
             @Override
             public void notifyNewBestBlock(StoredBlock block) throws VerificationException {
                 int height = block.getHeight();
-
-                if (height % CoinDefinition.getIntervalCheckpoints() == 0 && block.getHeader().getTimeSeconds() <= oneMonthAgo) {
-
- //               if (height % PARAMS.getInterval() == 0 && block.getHeader().getTimeSeconds() <= oneMonthAgo) {
-
-                    System.out.println(String.format("Checkpointing block %s at height %d",
-                            block.getHeader().getHash(), block.getHeight()));
+                if (height % CoinDefinition.getIntervalCheckpoints() == 0 && block.getHeader().getTimeSeconds() <= daysBack) {
+                    System.out.println(String.format("Checkpointing block %s at height %d", block.getHeader().getHash(), block.getHeight()));
                     checkpoints.put(height, block);
                 }
             }
@@ -82,9 +74,7 @@ public class BuildCheckpoints {
         peerGroup.startAsync();
         peerGroup.awaitRunning();
         peerGroup.downloadBlockChain();
-
         checkState(checkpoints.size() > 0);
-
         // Write checkpoint data out.
         final FileOutputStream fileOutputStream = new FileOutputStream(CHECKPOINTS_FILE, false);
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -114,12 +104,14 @@ public class BuildCheckpoints {
         // Sanity check the created file.
         CheckpointManager manager = new CheckpointManager(PARAMS, new FileInputStream(CHECKPOINTS_FILE));
         checkState(manager.numCheckpoints() == checkpoints.size());
-
+        // do a test of random choosen block 445000
         if (PARAMS.getId() == NetworkParameters.ID_MAINNET) {
-            //StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
-            //checkState(test.getHeight() == 280224);
-            //checkState(test.getHeader().getHashAsString()
-            //        .equals("5a4e378e1fd0cc77d9e4cfe84216366908e9352b3b5a661c7f0b590e4b077e27"));
+            StoredBlock test = manager.getCheckpointBefore(1400720656); // 2014-05-22 01:04:16
+            checkState(test.getHeight() == 445000);
+            checkState(test.getHeader().getHashAsString().equals("0d685430f32525f826be629e0770f4a69f5dad0005cd114bcea089b1cf8ca0a0"));
+            System.out.println("Height should be: 445000, height is: " + test.getHeight() +
+                    " Hash should be: 0d685430f32525f826be629e0770f4a69f5dad0005cd114bcea089b1cf8ca0a0, hash is: " + test.getHeader().getHashAsString()
+            );
         } else if (PARAMS.getId() == NetworkParameters.ID_TESTNET) {
             //StoredBlock test = manager.getCheckpointBefore(1390500000); // Thu Jan 23 19:00:00 CET 2014
             //checkState(test.getHeight() == 167328);

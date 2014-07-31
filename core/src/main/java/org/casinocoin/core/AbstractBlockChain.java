@@ -394,7 +394,7 @@ public abstract class AbstractBlockChain {
                 return false;
             } else {
                 // It connects to somewhere on the chain. Not necessarily the top of the best known chain.
-                checkDifficultyTransitionsNew(storedPrev, block);
+                checkDifficultyTransitions(storedPrev, block);
                 connectBlock(block, storedPrev, shouldVerifyTransactions(), filteredTxHashList, filteredTxn);
             }
 
@@ -800,7 +800,10 @@ public abstract class AbstractBlockChain {
         BigInteger newDifficulty;
 
         // calculate the correct new difficulty
-        if((storedPrev.getHeight()+1) < CoinDefinition.nKgwImplementation_v1100){
+        if (storedPrev.getHeight() <= 720){
+            // accept the first 720 blocks
+            return;
+        } else if((storedPrev.getHeight()+1) < CoinDefinition.nKgwImplementation_v1100){
             // default diff
             newDifficulty = defaultDiff(storedPrev, nextBlock);
         } else if (((storedPrev.getHeight()+1) >= CoinDefinition.nKgwImplementation_v1100) &&
@@ -811,7 +814,7 @@ public abstract class AbstractBlockChain {
             // KWG exploit diff
             newDifficulty = digiShieldDiff(storedPrev, nextBlock);
         }
-        if (newDifficulty == new BigInteger("-1")){
+        if(newDifficulty.equals(new BigInteger("-1"))){
             return;
         }
         //{
@@ -833,14 +836,14 @@ public abstract class AbstractBlockChain {
 
         int accuracyBytes = (int) (nextBlock.getDifficultyTarget() >>> 24) - 3;
         long receivedTargetCompact = nextBlock.getDifficultyTarget();
-        log.info("#### newDifficulty: " + Utils.encodeCompactBits(newDifficulty));
-        log.info("#### nextBlock.getDifficultyTarget(): " + nextBlock.getDifficultyTarget());
+//        log.info("#### newDifficulty: " + Utils.encodeCompactBits(newDifficulty));
+//        log.info("#### nextBlock.getDifficultyTarget(): " + nextBlock.getDifficultyTarget());
 
         // The calculated difficulty is to a higher precision than received, so reduce here.
         BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
         newDifficulty = newDifficulty.and(mask);
         long newTargetCompact = Utils.encodeCompactBits(newDifficulty);
-        log.info("#### receivedTargetCompact: " + receivedTargetCompact + " - newTargetCompact: " +newTargetCompact);
+//        log.info("#### receivedTargetCompact: " + receivedTargetCompact + " - newTargetCompact: " +newTargetCompact);
         if (newTargetCompact != receivedTargetCompact)
             throw new VerificationException("#### Network provided difficulty bits do not match what was calculated: " +
                     newTargetCompact + " vs " + receivedTargetCompact);
@@ -853,31 +856,6 @@ public abstract class AbstractBlockChain {
 //        if (newDifficulty.compareTo(receivedDifficulty) != 0)
 //            throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
 //                    receivedDifficulty.toString(16) + " vs " + newDifficulty.toString(16));
-    }
-
-    private void checkDifficultyTransitionsNew(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
-        checkState(lock.isHeldByCurrentThread());
-        Block prev = storedPrev.getHeader();
-
-        // Is this supposed to be a difficulty transition point?
-        if ((storedPrev.getHeight() + 1) % CoinDefinition.getInterval(storedPrev.getHeight() + 1, params.getId() == params.ID_TESTNET) != 0) {
-
-            // TODO: Refactor this hack after 0.5 is released and we stop supporting deserialization compatibility.
-            // This should be a method of the NetworkParameters, which should in turn be using singletons and a subclass
-            // for each network type. Then each network can define its own difficulty transition rules.
-            if (params.getId().equals(NetworkParameters.ID_TESTNET) && nextBlock.getTime().after(testnetDiffDate)) {
-                checkTestnetDifficulty(storedPrev, prev, nextBlock);
-                return;
-            }
-
-            // No ... so check the difficulty didn't actually change.
-            if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
-                throw new VerificationException("Unexpected change in difficulty at height " + storedPrev.getHeight() +
-                        ": " + Long.toHexString(nextBlock.getDifficultyTarget()) + " vs " +
-                        Long.toHexString(prev.getDifficultyTarget()));
-            return;
-        }
-        // removed other difficulty checks
     }
 
     private void checkTestnetDifficulty(StoredBlock storedPrev, Block prev, Block next) throws VerificationException, BlockStoreException {
@@ -1069,7 +1047,6 @@ public abstract class AbstractBlockChain {
         BigInteger newDifficulty = Utils.decodeCompactBits(prev.getDifficultyTarget());
         // Is this supposed to be a difficulty transition point?
         if ((storedPrev.getHeight() != 0) && (storedPrev.getHeight() + 1) % CoinDefinition.getInterval((storedPrev.getHeight() + 1),false) != 0) {
-            log.info("#### No transition point ####");
             // No ... so check the difficulty didn't actually change.
             if (nextBlock.getDifficultyTarget() != prev.getDifficultyTarget())
                 throw new VerificationException("#### Unexpected change in difficulty at height " + storedPrev.getHeight() +
@@ -1080,12 +1057,10 @@ public abstract class AbstractBlockChain {
 
         // We need to find a block far back in the chain. It's OK that this is expensive because it only occurs every
         // two weeks after the initial block chain download.
-        log.info("#### Transition point at: " + (storedPrev.getHeight() + 1));
         long now = System.currentTimeMillis();
         StoredBlock cursor = blockStore.get(prev.getHash());
 
         int goBack = params.getRetargetBlockCount(cursor);
-        log.info("#### goBack: " + goBack);
         for (int i = 0; i < goBack; i++) {
             if (cursor == null) {
                 // This should never happen. If it does, it means we are following an incorrect or busted chain.
@@ -1103,104 +1078,155 @@ public abstract class AbstractBlockChain {
         if(cursor == null) return null;
 
         Block blockIntervalAgo = cursor.getHeader();
-        log.info("#### Using block " + cursor.getHeight() + " to calculate next difficulty. Cursor: " + cursor.toString());
         int timespan = (int) (prev.getTimeSeconds() - blockIntervalAgo.getTimeSeconds());
+
         // Limit the adjustment step.
         final int targetTimespan = CoinDefinition.getTargetTimespan(storedPrev.getHeight() + 1, params.getId() == params.ID_TESTNET);//params.getTargetTimespan();
 
+        // check against min and max timespans
         int maxActualTimeSpan = CoinDefinition.getMaxTimeSpan(targetTimespan, storedPrev.getHeight() + 1, params.getId() == params.ID_TESTNET);
         int minActualTimeSpan = CoinDefinition.getMinTimeSpan(targetTimespan, storedPrev.getHeight() + 1, params.getId() == params.ID_TESTNET);
-
-//            if ((storedPrev.getHeight()+1) < 5760) {
-//                newDifficulty = params.getProofOfWorkLimit();
-//            } else {
-        log.info("#### Timespan: " + timespan + " TargetTimespan: " + targetTimespan +" Min Actual Timespan: " + minActualTimeSpan + " Max Actual Timespan: " + maxActualTimeSpan);
+        // log.info("#### Timespan: " + timespan + " TargetTimespan: " + targetTimespan +" Min Actual Timespan: " + minActualTimeSpan + " Max Actual Timespan: " + maxActualTimeSpan);
         if (timespan < minActualTimeSpan){
             timespan = minActualTimeSpan;
         }
         if (timespan > maxActualTimeSpan) {
             timespan = maxActualTimeSpan;
         }
-        log.info("#### New Timespan: " + timespan);
-        log.info("#### Old diff target: " + Utils.encodeCompactBits(newDifficulty));
         newDifficulty = newDifficulty.multiply(BigInteger.valueOf(timespan));
         newDifficulty = newDifficulty.divide(BigInteger.valueOf(targetTimespan));
-        log.info("#### New diff target: " + Utils.encodeCompactBits(newDifficulty));
-//           }
+
+        // log.info("#### New diff target: " + Utils.encodeCompactBits(newDifficulty));
         return newDifficulty;
     }
 
     private BigInteger kimotoGravityWellDiff(StoredBlock storedPrev, Block nextBlock, KGWParams kgwParams) throws BlockStoreException {
-        log.info("#### Calculating kimotoGravityWellDiff ####");
+        // log.info("#### Calculating kimotoGravityWellDiff for height:" + (storedPrev.getHeight()+1) + " blocksTargetSpacing: " + kgwParams.blocksTargetSpacing + " pastBlocksMin:" + kgwParams.pastBlocksMin + " pastBlocksMax:" + kgwParams.pastBlocksMax);
         if ((storedPrev == null) ||  (storedPrev.getHeight() == 0) ||  (storedPrev.getHeight() < kgwParams.pastBlocksMin)){
             return params.getProofOfWorkLimit();
         }
-        long PastBlocksMass = 0;
-        long PastRateActualSeconds		= 0;
-        long PastRateTargetSeconds		= 0;
-        double PastRateAdjustmentRatio	= 1.0;
-        BigInteger PastDifficultyAverage = BigInteger.valueOf(0);
-        BigInteger PastDifficultyAveragePrev = PastDifficultyAverage;
-        double EventHorizonDeviation;
-        double	EventHorizonDeviationFast;
-        double	EventHorizonDeviationSlow;
+        long pastBlocksMass = 0;
+        long pastRateActualSeconds		= 0;
+        long pastRateTargetSeconds		= 0;
+        double pastRateAdjustmentRatio	= 1.0;
+        BigInteger pastDifficultyAverage = BigInteger.valueOf(0);
+        BigInteger pastDifficultyAveragePrev = pastDifficultyAverage;
+        double eventHorizonDeviation;
+        double	eventHorizonDeviationFast;
+        double	eventHorizonDeviationSlow;
 
         StoredBlock blockReading = storedPrev;
         for (int i = 1; ((blockReading != null) && (blockReading.getHeight() > 0)); i++) {
-            if ((kgwParams.pastBlocksMax > 0) && (i > kgwParams.pastBlocksMax )) { break; }
-            PastBlocksMass++;
+            if ((kgwParams.pastBlocksMax > 0) && (i > kgwParams.pastBlocksMax )) {
+                break;
+            }
+            pastBlocksMass++;
             Block b = blockReading.getHeader();
-            if (i == 1)	{ PastDifficultyAverage = Utils.decodeCompactBits(b.getDifficultyTarget()); }
-            else {
-                PastDifficultyAverage = Utils.decodeCompactBits(b.getDifficultyTarget());
-                PastDifficultyAverage.subtract(PastDifficultyAveragePrev);
-                PastDifficultyAverage.divide(BigInteger.valueOf(i));
-                PastDifficultyAverage.add(PastDifficultyAveragePrev);
+            if (i == 1)	{
+                pastDifficultyAverage = Utils.decodeCompactBits(b.getDifficultyTarget());
+            } else {
+                pastDifficultyAverage = Utils.decodeCompactBits(b.getDifficultyTarget());
+                pastDifficultyAverage = pastDifficultyAverage.subtract(pastDifficultyAveragePrev);
+                pastDifficultyAverage = pastDifficultyAverage.divide(BigInteger.valueOf(i));
+                pastDifficultyAverage = pastDifficultyAverage.add(pastDifficultyAveragePrev);
             }
-            PastDifficultyAveragePrev = PastDifficultyAverage;
+            pastDifficultyAveragePrev = pastDifficultyAverage;
+            pastRateActualSeconds			= storedPrev.getHeader().getTimeSeconds() - b.getTimeSeconds();
+            pastRateTargetSeconds			= kgwParams.blocksTargetSpacing * pastBlocksMass;
+            pastRateAdjustmentRatio			= 1.0;
+            if (pastRateActualSeconds < 0) {
+                pastRateActualSeconds = 0;
+            }
+            if (pastRateActualSeconds != 0 && pastRateTargetSeconds != 0) {
+                pastRateAdjustmentRatio		= (double)pastRateTargetSeconds / (double)pastRateActualSeconds;
+            }
+            eventHorizonDeviation = 1 + (0.7084 * Math.pow( (((double)pastBlocksMass)/(double)28.2), -1.228));
+            eventHorizonDeviationFast		= eventHorizonDeviation;
+            eventHorizonDeviationSlow		= 1 / eventHorizonDeviation;
 
-            PastRateActualSeconds			= storedPrev.getHeader().getTimeSeconds() - b.getTimeSeconds();
-            PastRateTargetSeconds			= kgwParams.blocksTargetSpacing * PastBlocksMass;
-            PastRateAdjustmentRatio			= 1.0;
-            if (PastRateActualSeconds < 0) { PastRateActualSeconds = 0; }
-            if (PastRateActualSeconds != 0 && PastRateTargetSeconds != 0) {
-                PastRateAdjustmentRatio		= (double)PastRateTargetSeconds / (double)PastRateActualSeconds;
+            if (pastBlocksMass >= kgwParams.pastBlocksMin) {
+                if ((pastRateAdjustmentRatio <= eventHorizonDeviationSlow) || (pastRateAdjustmentRatio >= eventHorizonDeviationFast)){
+                    break;
+                }
             }
-            EventHorizonDeviation = 1 + (0.7084 * Math.pow( (((double)PastBlocksMass)/(double)144), -1.228));
-            EventHorizonDeviationFast		= EventHorizonDeviation;
-            EventHorizonDeviationSlow		= 1 / EventHorizonDeviation;
-
-            if (PastBlocksMass >= kgwParams.pastBlocksMin) {
-                if ((PastRateAdjustmentRatio <= EventHorizonDeviationSlow) || (PastRateAdjustmentRatio >= EventHorizonDeviationFast))
-                { /*assert(BlockReading);*/ break; }
-            }
-            //if (BlockReading->pprev == NULL) { assert(BlockReading); break; }
             blockReading = blockReading.getPrev(blockStore);
-            if (blockReading == null) { /*assert(BlockReading);*/ break; }
+            if (blockReading == null) {
+                break;
+            }
         }
-        BigInteger bnNew = PastDifficultyAverage;
-        if ((PastRateActualSeconds != 0) && (PastRateTargetSeconds != 0)) {
-            bnNew.multiply(BigInteger.valueOf(PastRateActualSeconds));
-            bnNew.divide(BigInteger.valueOf(PastRateTargetSeconds));
+        BigInteger bnNew = pastDifficultyAverage;
+        if ((pastRateActualSeconds != 0) && (pastRateTargetSeconds != 0)) {
+            bnNew = bnNew.multiply(BigInteger.valueOf(pastRateActualSeconds));
+            bnNew = bnNew.divide(BigInteger.valueOf(pastRateTargetSeconds));
         }
-    	/*
-    	if (bnNew > bnProofOfWorkLimit) { bnNew = bnProofOfWorkLimit; }
-
-        /// debug print
-        printf("Difficulty Retarget - Gravity Well\n");
-        printf("PastRateAdjustmentRatio = %g\n", PastRateAdjustmentRatio);
-        printf("Before: %08x  %s\n", BlockLastSolved->nBits, CBigNum().SetCompact(BlockLastSolved->nBits).getuint256().ToString().c_str());
-        printf("After:  %08x  %s\n", bnNew.GetCompact(), bnNew.getuint256().ToString().c_str());
-
-    	return bnNew.GetCompact();
-    	*/
+//        log.info("### Difficulty Retarget - Gravity Well");
+//        log.info("### PastRateAdjustmentRatio = "+pastRateAdjustmentRatio);
+//        log.info("### PastRateAdjustmentRatio = "+pastRateActualSeconds + "/"+pastRateTargetSeconds);
+//        log.info("### Before: " + storedPrev.getHeader().getDifficultyTargetAsInteger().toString(16));
+//        log.info("### After: " + bnNew.toString(16));
         return bnNew;
     }
 
     private BigInteger digiShieldDiff(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
-        log.info("#### Calculating digiShieldDiff ####");
+//        log.info("#### Calculating digiShieldDiff ####");
+        // DigiShield difficulty retarget system
+        // Credits to DigiByte developers
+
+        // Check if we are on a checkpoint and if its ok then return
+        if(params.isCheckpoint(storedPrev.getHeight()) && params.passesCheckpoint(storedPrev.getHeight(), storedPrev.getHeader().getHash())){
+            log.info("Block with height {} and hash {} is registered checkpoint. Block accepted.", storedPrev.getHeight(), storedPrev.getHeader().getHash().toString());
+            return new BigInteger("-1");
+        }
+
         BigInteger newDifficulty = null;
-        Block prev = storedPrev.getHeader();
+
+        int blocksToGoBack = 0;
+
+        //set default to pre-v2.0 values
+        int retargetTimespan = CoinDefinition.TARGET_SPACING_1; //Make sure we retarget every block
+        int retargetSpacing = CoinDefinition.TARGET_SPACING_1;
+        int retargetInterval = retargetTimespan / retargetSpacing;
+
+        // Genesis block
+        if (storedPrev == null){
+            return CoinDefinition.proofOfWorkLimit;
+        }
+
+        // Only change once per interval
+        if ((storedPrev.getHeight()+1) % retargetInterval != 0){
+            return storedPrev.getHeader().getDifficultyTargetAsInteger();
+        }
+
+        // DigiByte: This fixes an issue where a 51% attack can change difficulty at will.
+        // Go back the full period unless it's the first retarget after genesis. Code courtesy of Art Forz
+        blocksToGoBack = retargetInterval-1;
+        if ((storedPrev.getHeight()+1) != retargetInterval){
+            blocksToGoBack = retargetInterval;
+        }
+
+        // Go back by what we want to be 14 days worth of blocks
+        StoredBlock cursor = blockStore.get(storedPrev.getHeader().getHash());
+        for (int i = 0; i < blocksToGoBack; i++) {
+            cursor = blockStore.get(cursor.getHeader().getPrevBlockHash());
+        }
+
+        // Limit adjustment step
+        long nActualTimespan = storedPrev.getHeader().getTimeSeconds() - cursor.getHeader().getTimeSeconds();
+//        log.info("### nActualTimespan = " + nActualTimespan + " before bounds.");
+
+        newDifficulty = Utils.decodeCompactBits(storedPrev.getHeader().getDifficultyTarget());
+
+        if (nActualTimespan < (retargetTimespan - (retargetTimespan/4)) ) {
+            nActualTimespan = (retargetTimespan - (retargetTimespan/4));
+        }
+        if (nActualTimespan > (retargetTimespan + (retargetTimespan/2)) ){
+            nActualTimespan = (retargetTimespan + (retargetTimespan/2));
+        }
+
+        // Retarget
+        newDifficulty = newDifficulty.multiply(BigInteger.valueOf(nActualTimespan));
+        newDifficulty = newDifficulty.divide(BigInteger.valueOf(retargetTimespan));
+
         return newDifficulty;
     }
 }
