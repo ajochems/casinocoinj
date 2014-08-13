@@ -234,6 +234,10 @@ public class MySQLFullPrunedBlockStore implements FullPrunedBlockStore {
                 if(!conn.getAutoCommit()) {
                     conn.rollback();
                 }
+                conn.close();
+                if(conn == this.conn.get()){
+                    this.conn.set(null);
+                }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
