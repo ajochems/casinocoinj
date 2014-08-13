@@ -977,6 +977,8 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
             channels.openConnection(address.toSocketAddress(), peer);
         } catch (Exception e) {
             log.warn("Failed to connect to " + address + ": " + e.getMessage());
+            log.warn("throwable: " + e.getCause().getMessage());
+            log.warn("Stacktrace: " + e.getStackTrace().toString());
             handlePeerDeath(peer);
             return null;
         }

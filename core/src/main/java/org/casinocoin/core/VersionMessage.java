@@ -74,7 +74,7 @@ public class VersionMessage extends Message {
     public boolean relayTxesBeforeFilter;
 
     /** The version of this library release, as a string. */
-    public static final String CASINOCOINJ_VERSION = "0.14-SNAPSHOT";
+    public static final String CASINOCOINJ_VERSION = "0.15-SNAPSHOT";
     /** The value that is prepended to the subVer field of this application. */
     public static final String LIBRARY_SUBVER = "/digishield:1.3.0" + "/" + CoinDefinition.coinName+"J:" + CASINOCOINJ_VERSION + "/";
 

@@ -322,9 +322,8 @@ public class Wallet implements Serializable, BlockChainListener, PeerFilterProvi
             if (stream != null) {
                 stream.close();
             }
-            if (temp.delete()) {
-                log.warn("Deleted temp file after failed save.");
-            }
+            // delete temp file in case it could not be renamed
+            temp.delete();
         }
     }
 

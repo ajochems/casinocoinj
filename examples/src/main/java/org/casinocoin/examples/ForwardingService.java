@@ -124,7 +124,7 @@ public class ForwardingService {
     private static void forwardCoins(Transaction tx) {
         try {
             BigInteger value = tx.getValueSentToMe(kit.wallet());
-            System.out.println("Forwarding " + Utils.bitcoinValueToFriendlyString(value) + " BTC");
+            System.out.println("Forwarding " + Utils.bitcoinValueToFriendlyString(value) + " CSC");
             // Now send the coins back! Send with a small fee attached to ensure rapid confirmation.
             final BigInteger amountToSend = value.subtract(Transaction.REFERENCE_DEFAULT_MIN_TX_FEE);
             final Wallet.SendResult sendResult = kit.wallet().sendCoins(kit.peerGroup(), forwardingAddress, amountToSend);
