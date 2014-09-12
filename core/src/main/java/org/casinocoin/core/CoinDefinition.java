@@ -131,8 +131,8 @@ public class CoinDefinition {
     public static int spendableCoinbaseDepth = 8; //main.h: static const int COINBASE_MATURITY
     public static final BigInteger MAX_MONEY = BigInteger.valueOf(63000000).multiply(Utils.COIN);                 //main.h:  MAX_MONEY
 
-    public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(10000000);   // MIN_TX_FEE
-    public static final BigInteger DUST_LIMIT = Utils.CENT; //main.h CTransaction::GetMinFee        0.01 coins
+    public static final BigInteger DEFAULT_MIN_TX_FEE = BigInteger.valueOf(100000);   // MIN_TX_FEE 0.001 coins
+    public static final BigInteger DUST_LIMIT = BigInteger.valueOf(100000); //main.h CTransaction::GetMinFee        0.001 coins
 
     public static final int PROTOCOL_VERSION = 70004;          //version.h PROTOCOL_VERSION
     public static final int MIN_PROTOCOL_VERSION = 70004;        //version.h MIN_PROTO_VERSION - eliminate 60001 which are on the wrong fork

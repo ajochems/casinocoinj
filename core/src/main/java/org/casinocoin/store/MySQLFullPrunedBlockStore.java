@@ -22,7 +22,6 @@ import org.casinocoin.script.Script;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -53,7 +52,7 @@ public class MySQLFullPrunedBlockStore implements FullPrunedBlockStore {
     private ThreadLocal<Connection> conn;
     private List<Connection> allConnections;
     private String connectionURL;
-    private String jdbcURL;
+    private String jndiURL;
     private int fullStoreDepth;
     private String username;
     private String password;
@@ -70,23 +69,23 @@ public class MySQLFullPrunedBlockStore implements FullPrunedBlockStore {
 
     private static final String CREATE_HEADERS_TABLE = "CREATE TABLE store_headers (" +
             "    hash varbinary(255) NOT NULL," +
-            "    chainwork varbinary(255) NOT NULL," +
+            "    chainwork blob NOT NULL," +
             "    height integer NOT NULL," +
-            "    header varbinary(255) NOT NULL," +
+            "    header blob NOT NULL," +
             "    wasundoable boolean NOT NULL" +
             ");";
 
     private static final String CREATE_UNDOABLE_TABLE = "CREATE TABLE store_undoableblocks (" +
             "    hash varbinary(255) NOT NULL," +
             "    height integer NOT NULL," +
-            "    txoutchanges varbinary(255)," +
-            "    transactions varbinary(255)" +
+            "    txoutchanges blob," +
+            "    transactions blob" +
             ");";
     private static final String CREATE_OPEN_OUTPUT_TABLE = "CREATE TABLE store_openoutputs (" +
             "    hash varbinary(255) NOT NULL," +
             "    ooindex integer NOT NULL," +
             "    height integer NOT NULL," +
-            "    value varbinary(255) NOT NULL," +
+            "    value blob NOT NULL," +
             "    scriptbytes varbinary(255) NOT NULL," +
             "    toaddress varchar(35)," +
             "    addresstargetable integer" +
@@ -159,10 +158,10 @@ public class MySQLFullPrunedBlockStore implements FullPrunedBlockStore {
         initDatabase();
     }
 
-    public MySQLFullPrunedBlockStore(NetworkParameters params, String jdbcURL, int fullStoreDepth)
+    public MySQLFullPrunedBlockStore(NetworkParameters params, String jndiURL, int fullStoreDepth)
             throws BlockStoreException, NamingException {
         this.params = params;
-        this.jdbcURL = jdbcURL;
+        this.jndiURL = jndiURL;
         this.fullStoreDepth = fullStoreDepth;
         this.useDatasource = true;
 
@@ -207,11 +206,11 @@ public class MySQLFullPrunedBlockStore implements FullPrunedBlockStore {
                 return;
 
             Context ctx = new InitialContext();
-            DataSource ds = (DataSource) ctx.lookup(jdbcURL);
+            DataSource ds = (DataSource) ctx.lookup(jndiURL);
             conn.set(ds.getConnection());
             Connection connection = conn.get();
             allConnections.add(conn.get());
-            log.info("Made a new datasource connection to database " + jdbcURL);
+            log.info("Made a new datasource connection to database " + jndiURL);
         } catch (SQLException ex) {
             throw new BlockStoreException(ex);
         }

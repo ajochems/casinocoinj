@@ -107,6 +107,20 @@ public abstract class NetworkParameters implements Serializable {
     protected String[] dnsSeeds;
     protected Map<Integer, Sha256Hash> checkpoints = new HashMap<Integer, Sha256Hash>();
 
+    /**
+     * If we are downloading the block chain for the first time we can skip the tests upto the
+     * time of the first wallet key. This will speed up the block chain download.
+     */
+    protected boolean skipDifficultyChecks = false;
+
+    public boolean isSkipDifficultyChecks() {
+        return skipDifficultyChecks;
+    }
+
+    public void setSkipDifficultyChecks(boolean skipDifficultyChecks) {
+        this.skipDifficultyChecks = skipDifficultyChecks;
+    }
+
     protected NetworkParameters() {
         alertSigningKey = SATOSHI_KEY;
         genesisBlock = createGenesis(this);

@@ -80,9 +80,9 @@ public class Transaction extends ChildMessage implements Serializable {
 
     /**
      * If fee is lower than this value (in satoshis), a default reference client will treat it as if there were no fee.
-     * Currently this is 10000 satoshis.
+     * Currently this is 100000 satoshis.
      */
-    public static final BigInteger REFERENCE_DEFAULT_MIN_TX_FEE = CoinDefinition.DEFAULT_MIN_TX_FEE;//= BigInteger.valueOf(10000);
+    public static final BigInteger REFERENCE_DEFAULT_MIN_TX_FEE = CoinDefinition.DEFAULT_MIN_TX_FEE;//= BigInteger.valueOf(1000000);
 
     /**
      * Any standard (ie pay-to-address) output smaller than this value (in satoshis) will most likely be rejected by the network.
